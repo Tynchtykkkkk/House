@@ -16,6 +16,19 @@ class UserProfile(AbstractUser):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
+class Region(models.Model):
+    region_name = models.CharField(max_length=55, default='Unknown')
+
+    def __str__(self):
+        return f'{self.region_name}'
+
+class City(models.Model):
+    city_name = models.CharField(max_length=55, null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.city_name}'
+
 class Property(models.Model):
     property_name = models.CharField(max_length=55)
     description = models.TextField(null=True, blank=True)
@@ -32,32 +45,20 @@ class Property(models.Model):
     property_type = models.CharField(max_length=20, choices=PropertyTypeChoices)
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.property_name}'
 
 class PropertyImage(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+    property = models.ForeignKey(Property, related_name='property_images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='property_images')
 
     def __str__(self):
         return f'{self.property}, {self.image}'
 
-class Region(models.Model):
-    region_name = models.CharField(max_length=55)
-
-    def __str__(self):
-        return f'{self.region_name}'
-
-class City(models.Model):
-    city_name = models.CharField(max_length=55)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.city_name}'
-
 class District(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     district_name = models.CharField(max_length=55)
 
     def __str__(self):
