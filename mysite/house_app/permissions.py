@@ -20,4 +20,4 @@ class IsOwnerOrAdmin(BasePermission):
         return request.user.role == "ADMIN" or obj.owner == request.user
 class IsAuthenticated(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated
+        return request
